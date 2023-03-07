@@ -1,0 +1,61 @@
+package top.iot.gateway.core.device;
+
+import top.iot.gateway.core.cluster.ServerNode;
+import top.iot.gateway.core.device.session.DeviceSessionManager;
+import top.iot.gateway.core.message.BroadcastMessage;
+import top.iot.gateway.core.message.DeviceMessageReply;
+import top.iot.gateway.core.message.Message;
+import org.reactivestreams.Publisher;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import javax.annotation.Nullable;
+import java.time.Duration;
+import java.util.Collection;
+
+/**
+ * 设备操作代理,用于管理集群间设备指令发送
+ *
+ * @author zhouhao
+ * @since 1.0
+ */
+public interface DeviceOperationBroker {
+
+    /**
+     * 获取指定服务里设备状态
+     *
+     * @param deviceGatewayServerId 设备所在服务ID {@link ServerNode#getId()}
+     * @param deviceIdList          设备列表
+     * @return 设备状态
+     * @see DeviceSessionManager#isAlive(String)
+     */
+    Flux<DeviceStateInfo> getDeviceState(@Nullable String deviceGatewayServerId, Collection<String> deviceIdList);
+
+    /**
+     * 根据消息ID监听响应
+     *
+     * @param deviceId  设备ID
+     * @param messageId 消息ID
+     * @param timeout   超时时间
+     * @return 消息返回
+     */
+    Flux<DeviceMessageReply> handleReply(String deviceId, String messageId, Duration timeout);
+
+    /**
+     * 发送设备消息到指定到服务
+     *
+     * @param deviceGatewayServerId 设备所在服务ID {@link ServerNode#getId()}
+     * @return 有多少服务收到了此消息
+     * @see DeviceOperator#getConnectionServerId()
+     */
+    Mono<Integer> send(String deviceGatewayServerId, Publisher<? extends Message> message);
+
+    /**
+     * 发送广播消息
+     *
+     * @param message 广播消息
+     * @return 有多少服务收到了此消息
+     */
+    Mono<Integer> send(Publisher<? extends BroadcastMessage> message);
+
+}
