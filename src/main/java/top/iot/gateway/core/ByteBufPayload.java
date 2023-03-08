@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 @Slf4j
 class ByteBufPayload implements Payload {
 
-    public static boolean POOL_ENABLED = Boolean.parseBoolean(System.getProperty("jetlinks.eventbus.payload.pool.enabled","true"));
+    public static boolean POOL_ENABLED = Boolean.parseBoolean(System.getProperty("top.iot.eventbus.payload.pool.enabled","true"));
 
     private static final Recycler<ByteBufPayload> RECYCLER = RecyclerUtils.newRecycler(ByteBufPayload.class,ByteBufPayload::new);
 
